@@ -58,17 +58,20 @@ SHEET_OFFSETS = {
 }
 
 class Square:
-    def __init__(self, x, y):
+    def __init__(self, x, y, i, j):
         offset = SHEET_OFFSETS[SquareImage.BLANK_UP]
         self.sprite = arcade.Sprite(SPRITE_SHEET_PATH, SPRITE_SCALE, offset.x, offset.y, SPRITE_NATIVE_SIZE, SPRITE_NATIVE_SIZE)
         self.x = x
         self.y = y
         self.sprite.center_x = x
         self.sprite.center_y = y
+        self.i = i
+        self.j = j
 
         self.is_bomb = False
         self.is_flag = False 
-    
+        self.adjacent_bomb_count = 0 
+
     def DrawAs(self, image):
         offset = SHEET_OFFSETS[image]
         self.sprite = arcade.Sprite(SPRITE_SHEET_PATH, SPRITE_SCALE, offset.x, offset.y, SPRITE_NATIVE_SIZE, SPRITE_NATIVE_SIZE)
@@ -89,7 +92,7 @@ class MinesweeperGame(arcade.Window):
             x = i * SPRITE_FINAL_SIZE + SPRITE_HALF_SIZE
             for j in range(GRID_COLUMNS):
                 y = j * SPRITE_FINAL_SIZE + SPRITE_HALF_SIZE
-                self.squares.append(Square(x,y))
+                self.squares.append(Square(x,y,i,j))
         self.Place_mines()
         # this is just for using the mouse to change the imatge, delete this later
         self.last_image = 1
@@ -99,6 +102,14 @@ class MinesweeperGame(arcade.Window):
         for bomb in posible_bomb: 
             bomb.is_bomb=True
             bomb.DrawAs(SquareImage.MINE_GREY)
+        
+        self.Count_adjacnent_mine(posible_bomb)
+    
+    def Count_adjacnent_mine(self, bombs):
+        # for every square set adjacent_bomb_count to the correct number
+        # argument bombs is all the squares that are bombs
+        # every square has index i and j to identify where it is
+        pass
 
     def GetMineIndex(self, x, y):
         i = math.floor(x / SPRITE_FINAL_SIZE)
