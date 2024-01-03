@@ -1,7 +1,9 @@
 import arcade
 from enum import Enum
 import math
+from random import sample
 
+TOTAL_MINE = 30
 SCREEN_TITLE = "Mine Sweeper"
 GRID_COLUMNS = 14
 GRID_ROWS = 14
@@ -63,6 +65,9 @@ class Square:
         self.y = y
         self.sprite.center_x = x
         self.sprite.center_y = y
+
+        self.is_bomb = False
+        self.is_flag = False 
     
     def DrawAs(self, image):
         offset = SHEET_OFFSETS[image]
@@ -85,9 +90,15 @@ class MinesweeperGame(arcade.Window):
             for j in range(GRID_COLUMNS):
                 y = j * SPRITE_FINAL_SIZE + SPRITE_HALF_SIZE
                 self.squares.append(Square(x,y))
-        
+        self.Place_mines()
         # this is just for using the mouse to change the imatge, delete this later
         self.last_image = 1
+
+    def Place_mines(self):
+        posible_bomb=sample(self.squares,TOTAL_MINE)
+        for bomb in posible_bomb: 
+            bomb.is_bomb=True
+            bomb.DrawAs(SquareImage.MINE_GREY)
 
     def GetMineIndex(self, x, y):
         i = math.floor(x / SPRITE_FINAL_SIZE)
@@ -98,16 +109,24 @@ class MinesweeperGame(arcade.Window):
 
 
     def on_mouse_press(self, x, y, button, key_modifiers):
-        if button == arcade.MOUSE_BUTTON_LEFT:
-            index = self.GetMineIndex(x,y)
-            # just for PoC of different drawing remove this later
-            # cylcle the image to draw
-            self.last_image = self.last_image + 1
-            if self.last_image > 16:
-                self.last_image = 1
-            self.squares[index].DrawAs(SquareImage(self.last_image))
+        index = self.GetMineIndex(x,y)
 
-            
+        if button == arcade.MOUSE_BUTTON_RIGHT:
+            if self.squares[index].is_flag:
+                self.squares[index].is_flag = False
+                self.squares[index].DrawAs(SquareImage.BLANK_UP)
+            else:
+                self.squares[index].is_flag = True
+                self.squares[index].DrawAs(SquareImage.FLAG)
+           
+        if button == arcade.MOUSE_BUTTON_LEFT:
+           if self.squares[index].is_bomb:
+               print("you lost")
+               arcade.close_window()
+               
+        
+             
+           
 
     def on_draw(self):
         arcade.start_render()
