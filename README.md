@@ -1,2 +1,2 @@
 # minesweeper
-minesweeper game
+It's mines weeper in python. Love it
