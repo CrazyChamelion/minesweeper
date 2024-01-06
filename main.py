@@ -84,7 +84,7 @@ class Square:
         self.is_flag = False
         self.adjacent_bomb_count = 0
 
-    def DrawAs(self, image):
+    def draw_as(self, image):
         offset = SHEET_OFFSETS[image]
         self.sprite = arcade.Sprite(
             SPRITE_SHEET_PATH,
@@ -97,7 +97,7 @@ class Square:
         self.sprite.center_x = self.x
         self.sprite.center_y = self.y
 
-    def Draw(self):
+    def draw(self):
         self.sprite.draw()
 
 
@@ -111,35 +111,35 @@ class MinesweeperGame(arcade.Window):
             for j in range(GRID_ROWS):
                 y = j * SPRITE_FINAL_SIZE + SPRITE_HALF_SIZE
                 self.squares.append(Square(x, y, i, j))
-        self.Place_mines()
+        self.place_mines()
 
-    def Place_mines(self):
+    def place_mines(self):
         posible_bomb = sample(self.squares, TOTAL_MINE)
         for bomb in posible_bomb:
             bomb.is_bomb = True
-            bomb.DrawAs(SquareImage.MINE_GREY)
+            bomb.draw_as(SquareImage.MINE_GREY)
 
-        self.Count_adjacnent_mine(posible_bomb)
+        self.count_adjacnent_mine(posible_bomb)
 
-    def Draw_adjacent_bomb_count(self, square):
+    def draw_adjacent_bomb_count(self, square):
         if square.adjacent_bomb_count == 1:
-            square.DrawAs(SquareImage.ONE)
+            square.draw_as(SquareImage.ONE)
         if square.adjacent_bomb_count == 2:
-            square.DrawAs(SquareImage.TWO)
+            square.draw_as(SquareImage.TWO)
         if square.adjacent_bomb_count == 3:
-            square.DrawAs(SquareImage.THREE)
+            square.draw_as(SquareImage.THREE)
         if square.adjacent_bomb_count == 4:
-            square.DrawAs(SquareImage.FOUR)
+            square.draw_as(SquareImage.FOUR)
         if square.adjacent_bomb_count == 5:
-            square.DrawAs(SquareImage.FIVE)
+            square.draw_as(SquareImage.FIVE)
         if square.adjacent_bomb_count == 6:
-            square.DrawAs(SquareImage.SIX)
+            square.draw_as(SquareImage.SIX)
         if square.adjacent_bomb_count == 7:
-            square.DrawAs(SquareImage.SEVEN)
+            square.draw_as(SquareImage.SEVEN)
         if square.adjacent_bomb_count == 8:
-            square.DrawAs(SquareImage.EIGHT)
+            square.draw_as(SquareImage.EIGHT)
 
-    def Count_adjacnent_mine(self, bombs):
+    def count_adjacnent_mine(self, bombs):
         # for every square set adjacent_bomb_count to the correct number
         # argument bombs is all the squares that are bombs
         # every square has index i and j to identify where it is
@@ -153,34 +153,34 @@ class MinesweeperGame(arcade.Window):
                     if j < 0 or j >= GRID_ROWS:
                         continue
 
-                    index = self.GetMineIndexFromIJ(i, j)
+                    index = self.get_mine_index_ij(i, j)
                     adjacent_square = self.squares[index]
                     if not adjacent_square.is_bomb:
                         adjacent_square.adjacent_bomb_count = (
                             adjacent_square.adjacent_bomb_count + 1
                         )
-                        self.Draw_adjacent_bomb_count(adjacent_square)
+                        self.draw_adjacent_bomb_count(adjacent_square)
 
-    def GetMineIndexFromIJ(self, i, j):
+    def get_mine_index_ij(self, i, j):
         return i * GRID_ROWS + j
 
-    def GetMineIndex(self, x, y):
+    def get_mine_index_xy(self, x, y):
         i = math.floor(x / SPRITE_FINAL_SIZE)
         j = math.floor(y / SPRITE_FINAL_SIZE)
-        index = self.GetMineIndexFromIJ(i, j)
+        index = self.get_mine_index_ij(i, j)
         # print("i {0}, j {1}, index {2}".format(i, j, index))
         return index
 
     def on_mouse_press(self, x, y, button, key_modifiers):
-        index = self.GetMineIndex(x, y)
+        index = self.get_mine_index_xy(x, y)
 
         if button == arcade.MOUSE_BUTTON_RIGHT:
             if self.squares[index].is_flag:
                 self.squares[index].is_flag = False
-                self.squares[index].DrawAs(SquareImage.BLANK_UP)
+                self.squares[index].draw_as(SquareImage.BLANK_UP)
             else:
                 self.squares[index].is_flag = True
-                self.squares[index].DrawAs(SquareImage.FLAG)
+                self.squares[index].draw_as(SquareImage.FLAG)
 
         if button == arcade.MOUSE_BUTTON_LEFT:
             if self.squares[index].is_bomb:
@@ -190,11 +190,11 @@ class MinesweeperGame(arcade.Window):
     def on_draw(self):
         arcade.start_render()
         for s in self.squares:
-            s.Draw()
+            s.draw()
 
 
 def main():
-    gameObject = MinesweeperGame(SCREEN_WIDTH, SCREEN_HEIGHT)
+    _ = MinesweeperGame(SCREEN_WIDTH, SCREEN_HEIGHT)
     arcade.run()
 
 
