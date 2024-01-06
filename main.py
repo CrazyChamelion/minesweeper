@@ -3,20 +3,22 @@ from enum import Enum
 import math
 from random import sample
 
-TOTAL_MINE = 20
+TOTAL_MINE = 40
 SCREEN_TITLE = "Mine Sweeper"
-GRID_COLUMNS = 15
+# good numbers colums X rows 20 X 15 bombs 30
+GRID_COLUMNS = 20
 GRID_ROWS = 15
 SPRITE_SHEET_PATH = "./sprites.png"
 SPRITE_NATIVE_SIZE = 16
 SPRITE_SCALE = 4
 SPRITE_FINAL_SIZE = SPRITE_SCALE * SPRITE_NATIVE_SIZE
 SPRITE_HALF_SIZE = SPRITE_FINAL_SIZE / 2
-SCREEN_WIDTH = GRID_COLUMNS * SPRITE_FINAL_SIZE 
-SCREEN_HEIGHT = GRID_ROWS * SPRITE_FINAL_SIZE 
+SCREEN_WIDTH = GRID_COLUMNS * SPRITE_FINAL_SIZE
+SCREEN_HEIGHT = GRID_ROWS * SPRITE_FINAL_SIZE
+
 
 class SquareImage(Enum):
-    BLANK_UP   = 1
+    BLANK_UP = 1
     BLANK_DOWN = 2
     FLAG = 3
     QUESTION_UP = 4
@@ -33,34 +35,44 @@ class SquareImage(Enum):
     SEVEN = 15
     EIGHT = 16
 
+
 class Coordinate:
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
+
 SHEET_OFFSETS = {
-    SquareImage.BLANK_UP: Coordinate(0,50),
-    SquareImage.BLANK_DOWN: Coordinate(16,50),
-    SquareImage.FLAG: Coordinate(33,50),
-    SquareImage.QUESTION_UP: Coordinate(50,50),
-    SquareImage.QUESTION_DOWN: Coordinate(67,50),
-    SquareImage.MINE_GREY: Coordinate(84,50),
-    SquareImage.MINE_RED: Coordinate(101,50),
-    SquareImage.MINE_X: Coordinate(118,50),
-    SquareImage.ONE: Coordinate(0,68),
-    SquareImage.TWO: Coordinate(16,68),
-    SquareImage.THREE: Coordinate(33,68),
-    SquareImage.FOUR: Coordinate(50,68),
-    SquareImage.FIVE: Coordinate(67,68),
-    SquareImage.SIX: Coordinate(84,68),
-    SquareImage.SEVEN: Coordinate(101,68),
-    SquareImage.EIGHT: Coordinate(118,68),
+    SquareImage.BLANK_UP: Coordinate(0, 50),
+    SquareImage.BLANK_DOWN: Coordinate(16, 50),
+    SquareImage.FLAG: Coordinate(33, 50),
+    SquareImage.QUESTION_UP: Coordinate(50, 50),
+    SquareImage.QUESTION_DOWN: Coordinate(67, 50),
+    SquareImage.MINE_GREY: Coordinate(84, 50),
+    SquareImage.MINE_RED: Coordinate(101, 50),
+    SquareImage.MINE_X: Coordinate(118, 50),
+    SquareImage.ONE: Coordinate(0, 68),
+    SquareImage.TWO: Coordinate(16, 68),
+    SquareImage.THREE: Coordinate(33, 68),
+    SquareImage.FOUR: Coordinate(50, 68),
+    SquareImage.FIVE: Coordinate(67, 68),
+    SquareImage.SIX: Coordinate(84, 68),
+    SquareImage.SEVEN: Coordinate(101, 68),
+    SquareImage.EIGHT: Coordinate(118, 68),
 }
+
 
 class Square:
     def __init__(self, x, y, i, j):
         offset = SHEET_OFFSETS[SquareImage.BLANK_UP]
-        self.sprite = arcade.Sprite(SPRITE_SHEET_PATH, SPRITE_SCALE, offset.x, offset.y, SPRITE_NATIVE_SIZE, SPRITE_NATIVE_SIZE)
+        self.sprite = arcade.Sprite(
+            SPRITE_SHEET_PATH,
+            SPRITE_SCALE,
+            offset.x,
+            offset.y,
+            SPRITE_NATIVE_SIZE,
+            SPRITE_NATIVE_SIZE,
+        )
         self.x = x
         self.y = y
         self.sprite.center_x = x
@@ -69,42 +81,47 @@ class Square:
         self.j = j
 
         self.is_bomb = False
-        self.is_flag = False 
-        self.adjacent_bomb_count = 0 
+        self.is_flag = False
+        self.adjacent_bomb_count = 0
 
     def DrawAs(self, image):
         offset = SHEET_OFFSETS[image]
-        self.sprite = arcade.Sprite(SPRITE_SHEET_PATH, SPRITE_SCALE, offset.x, offset.y, SPRITE_NATIVE_SIZE, SPRITE_NATIVE_SIZE)
+        self.sprite = arcade.Sprite(
+            SPRITE_SHEET_PATH,
+            SPRITE_SCALE,
+            offset.x,
+            offset.y,
+            SPRITE_NATIVE_SIZE,
+            SPRITE_NATIVE_SIZE,
+        )
         self.sprite.center_x = self.x
         self.sprite.center_y = self.y
 
-
     def Draw(self):
         self.sprite.draw()
-    
+
 
 class MinesweeperGame(arcade.Window):
     def __init__(self, width, height):
         super().__init__(width, height, SCREEN_TITLE)
         arcade.set_background_color(arcade.color.WHITE)
         self.squares = []
-        for i in range(GRID_ROWS):
+        for i in range(GRID_COLUMNS):
             x = i * SPRITE_FINAL_SIZE + SPRITE_HALF_SIZE
-            for j in range(GRID_COLUMNS):
+            for j in range(GRID_ROWS):
                 y = j * SPRITE_FINAL_SIZE + SPRITE_HALF_SIZE
-                self.squares.append(Square(x,y,i,j))
+                self.squares.append(Square(x, y, i, j))
         self.Place_mines()
-      
 
     def Place_mines(self):
-        posible_bomb=sample(self.squares,TOTAL_MINE)
-        for bomb in posible_bomb: 
-            bomb.is_bomb=True
+        posible_bomb = sample(self.squares, TOTAL_MINE)
+        for bomb in posible_bomb:
+            bomb.is_bomb = True
             bomb.DrawAs(SquareImage.MINE_GREY)
-        
+
         self.Count_adjacnent_mine(posible_bomb)
 
-    def Draw_adjacent_bomb_count(self, square):    
+    def Draw_adjacent_bomb_count(self, square):
         if square.adjacent_bomb_count == 1:
             square.DrawAs(SquareImage.ONE)
         if square.adjacent_bomb_count == 2:
@@ -120,39 +137,42 @@ class MinesweeperGame(arcade.Window):
         if square.adjacent_bomb_count == 7:
             square.DrawAs(SquareImage.SEVEN)
         if square.adjacent_bomb_count == 8:
-           square.DrawAs(SquareImage.EIGHT)
-    
+            square.DrawAs(SquareImage.EIGHT)
+
     def Count_adjacnent_mine(self, bombs):
         # for every square set adjacent_bomb_count to the correct number
         # argument bombs is all the squares that are bombs
         # every square has index i and j to identify where it is
         for bomb in bombs:
-            for i_offset in range(-1,2):
+            for i_offset in range(-1, 2):
                 i = bomb.i + i_offset
-                if i < 0 or i >=  GRID_COLUMNS:
+                if i < 0 or i >= GRID_COLUMNS:
                     continue
-                for j_offset in range(-1,2):
+                for j_offset in range(-1, 2):
                     j = bomb.j + j_offset
                     if j < 0 or j >= GRID_ROWS:
                         continue
-                    adjacent_square = self.squares[self.GetMineIndexFromIJ(i,j)]
+
+                    index = self.GetMineIndexFromIJ(i, j)
+                    adjacent_square = self.squares[index]
                     if not adjacent_square.is_bomb:
-                        adjacent_square.adjacent_bomb_count = adjacent_square.adjacent_bomb_count + 1 
+                        adjacent_square.adjacent_bomb_count = (
+                            adjacent_square.adjacent_bomb_count + 1
+                        )
                         self.Draw_adjacent_bomb_count(adjacent_square)
 
     def GetMineIndexFromIJ(self, i, j):
-        return i * GRID_COLUMNS + j
+        return i * GRID_ROWS + j
 
     def GetMineIndex(self, x, y):
         i = math.floor(x / SPRITE_FINAL_SIZE)
         j = math.floor(y / SPRITE_FINAL_SIZE)
-        index = self.GetMineIndexFromIJ(i,j)
-        #print("i {0}, j {1}, index {2}".format(i, j, index))
+        index = self.GetMineIndexFromIJ(i, j)
+        # print("i {0}, j {1}, index {2}".format(i, j, index))
         return index
 
-
     def on_mouse_press(self, x, y, button, key_modifiers):
-        index = self.GetMineIndex(x,y)
+        index = self.GetMineIndex(x, y)
 
         if button == arcade.MOUSE_BUTTON_RIGHT:
             if self.squares[index].is_flag:
@@ -161,15 +181,11 @@ class MinesweeperGame(arcade.Window):
             else:
                 self.squares[index].is_flag = True
                 self.squares[index].DrawAs(SquareImage.FLAG)
-           
+
         if button == arcade.MOUSE_BUTTON_LEFT:
-           if self.squares[index].is_bomb:
-               print("you lost")
-               arcade.close_window()
-               
-        
-             
-           
+            if self.squares[index].is_bomb:
+                print("you lost")
+                arcade.close_window()
 
     def on_draw(self):
         arcade.start_render()
