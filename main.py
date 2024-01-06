@@ -3,10 +3,10 @@ from enum import Enum
 import math
 from random import sample
 
-TOTAL_MINE = 30
+TOTAL_MINE = 20
 SCREEN_TITLE = "Mine Sweeper"
-GRID_COLUMNS = 14
-GRID_ROWS = 14
+GRID_COLUMNS = 15
+GRID_ROWS = 15
 SPRITE_SHEET_PATH = "./sprites.png"
 SPRITE_NATIVE_SIZE = 16
 SPRITE_SCALE = 4
@@ -94,8 +94,7 @@ class MinesweeperGame(arcade.Window):
                 y = j * SPRITE_FINAL_SIZE + SPRITE_HALF_SIZE
                 self.squares.append(Square(x,y,i,j))
         self.Place_mines()
-        # this is just for using the mouse to change the imatge, delete this later
-        self.last_image = 1
+      
 
     def Place_mines(self):
         posible_bomb=sample(self.squares,TOTAL_MINE)
@@ -104,17 +103,50 @@ class MinesweeperGame(arcade.Window):
             bomb.DrawAs(SquareImage.MINE_GREY)
         
         self.Count_adjacnent_mine(posible_bomb)
+
+    def Draw_adjacent_bomb_count(self, square):    
+        if square.adjacent_bomb_count == 1:
+            square.DrawAs(SquareImage.ONE)
+        if square.adjacent_bomb_count == 2:
+            square.DrawAs(SquareImage.TWO)
+        if square.adjacent_bomb_count == 3:
+            square.DrawAs(SquareImage.THREE)
+        if square.adjacent_bomb_count == 4:
+            square.DrawAs(SquareImage.FOUR)
+        if square.adjacent_bomb_count == 5:
+            square.DrawAs(SquareImage.FIVE)
+        if square.adjacent_bomb_count == 6:
+            square.DrawAs(SquareImage.SIX)
+        if square.adjacent_bomb_count == 7:
+            square.DrawAs(SquareImage.SEVEN)
+        if square.adjacent_bomb_count == 8:
+           square.DrawAs(SquareImage.EIGHT)
     
     def Count_adjacnent_mine(self, bombs):
         # for every square set adjacent_bomb_count to the correct number
         # argument bombs is all the squares that are bombs
         # every square has index i and j to identify where it is
-        pass
+        for bomb in bombs:
+            for i_offset in range(-1,2):
+                i = bomb.i + i_offset
+                if i < 0 or i >=  GRID_COLUMNS:
+                    continue
+                for j_offset in range(-1,2):
+                    j = bomb.j + j_offset
+                    if j < 0 or j >= GRID_ROWS:
+                        continue
+                    adjacent_square = self.squares[self.GetMineIndexFromIJ(i,j)]
+                    if not adjacent_square.is_bomb:
+                        adjacent_square.adjacent_bomb_count = adjacent_square.adjacent_bomb_count + 1 
+                        self.Draw_adjacent_bomb_count(adjacent_square)
+
+    def GetMineIndexFromIJ(self, i, j):
+        return i * GRID_COLUMNS + j
 
     def GetMineIndex(self, x, y):
         i = math.floor(x / SPRITE_FINAL_SIZE)
         j = math.floor(y / SPRITE_FINAL_SIZE)
-        index = i * GRID_COLUMNS + j
+        index = self.GetMineIndexFromIJ(i,j)
         #print("i {0}, j {1}, index {2}".format(i, j, index))
         return index
 
