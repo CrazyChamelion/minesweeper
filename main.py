@@ -117,7 +117,8 @@ class MinesweeperGame(arcade.Window):
         posible_bomb = sample(self.squares, TOTAL_MINE)
         for bomb in posible_bomb:
             bomb.is_bomb = True
-            bomb.draw_as(SquareImage.MINE_GREY)
+            # for debugging uncomment
+            #bomb.draw_as(SquareImage.MINE_GREY)
 
         self.count_adjacnent_mine(posible_bomb)
 
@@ -159,7 +160,8 @@ class MinesweeperGame(arcade.Window):
                         adjacent_square.adjacent_bomb_count = (
                             adjacent_square.adjacent_bomb_count + 1
                         )
-                        self.draw_adjacent_bomb_count(adjacent_square)
+                        # for debugging uncomment
+                        #self.draw_adjacent_bomb_count(adjacent_square)
 
     def get_mine_index_ij(self, i, j):
         return i * GRID_ROWS + j
@@ -200,3 +202,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+#self.square.draw_as(SquareImage.BLANK_UP)
