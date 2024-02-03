@@ -192,18 +192,22 @@ class MinesweeperGame(arcade.Window):
                 arcade.close_window()
             elif self.squares[index].adjacent_bomb_count == 0:
                 square = self.squares[index]
-                square.draw_as(SquareImage.BLANK_DOWN)
-                two2_prossess = [square] 
+                two2_prossess = [square]
                 while two2_prossess:
                     square = two2_prossess[0]
                     two2_prossess.remove(square)
                     for i_offset in range(-1, 2):
                         for j_offset in range(-1,2):
+                            print('io {} jo {}'.format(i_offset, j_offset))
                             squarzx = square.i + i_offset 
                             squarzy = square.j + j_offset
                             indexx = self.get_mine_index_ij(squarzx, squarzy)
                             squarezz = self.squares[indexx]
-                            if squarezz.image == SquareImage.BLANK_UP: 
+                            if squarezz.adjacent_bomb_count > 0:
+                                print("drawing adjacent")
+                                self.draw_adjacent_bomb_count(squarezz)
+                                continue
+                            if squarezz.image == SquareImage.BLANK_UP and squarezz.adjacent_bomb_count == 0: 
                                 two2_prossess.append(squarezz)
                             squarezz.draw_as(SquareImage.BLANK_DOWN)
                             #elif self.squares[index].is_bomb:
