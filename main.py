@@ -186,13 +186,12 @@ class MinesweeperGame(arcade.Window):
                 self.squares[index].is_flag = True
                 self.squares[index].draw_as(SquareImage.FLAG)
 
-        if button == arcade.MOUSE_BUTTON_LEFT :
+        if button == arcade.MOUSE_BUTTON_LEFT:
             if self.squares[index].is_bomb:
                 print("you lost")
                 arcade.close_window()
             elif self.squares[index].adjacent_bomb_count == 0:
                 square = self.squares[index]
-                square.draw_as(SquareImage.BLANK_DOWN)
                 two2_prossess = [square] 
                 while two2_prossess:
                     square = two2_prossess[0]
@@ -203,6 +202,9 @@ class MinesweeperGame(arcade.Window):
                             squarzy = square.j + j_offset
                             indexx = self.get_mine_index_ij(squarzx, squarzy)
                             squarezz = self.squares[indexx]
+                            if squarezz.adjacent_bomb_count > 0: 
+                                self.draw_adjacent_bomb_count(squarezz)    
+                                continue
                             if squarezz.image == SquareImage.BLANK_UP: 
                                 two2_prossess.append(squarezz)
                             squarezz.draw_as(SquareImage.BLANK_DOWN)
