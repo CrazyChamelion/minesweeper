@@ -197,9 +197,14 @@ class MinesweeperGame(arcade.Window):
                     square = two2_prossess[0]
                     two2_prossess.remove(square)
                     for i_offset in range(-1, 2):
-                        for j_offset in range(-1,2):
+                        for j_offset in range(-1, 2):
                             squarzx = square.i + i_offset 
                             squarzy = square.j + j_offset
+                            if squarzx < 0 or squarzx >= GRID_COLUMNS:
+                                continue
+                            if squarzy < 0 or squarzy >= GRID_ROWS:
+                                continue
+
                             indexx = self.get_mine_index_ij(squarzx, squarzy)
                             squarezz = self.squares[indexx]
                             if squarezz.adjacent_bomb_count > 0: 
