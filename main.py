@@ -217,7 +217,8 @@ class MinesweeperGame(arcade.Window):
                             #        squarezz.draw_as(SquareImage.MINE_GREY)
                             #else:
                             #    squarezz.draw_as(SquareImage.BLANK_DOWN)
-                            
+            else:
+                self.draw_adjacent_bomb_count(self.squares[index])          
 
 
                             
