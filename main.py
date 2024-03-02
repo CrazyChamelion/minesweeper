@@ -174,10 +174,21 @@ class MinesweeperGame(arcade.Window):
         index = self.get_mine_index_ij(i, j)
         # print("i {0}, j {1}, index {2}".format(i, j, index))
         return index
+    
+    def has_won(self):
+        one = 0
+        for square in self.squares:
+            if square.image != SquareImage.BLANK_UP or square.is_bomb:
+                continue
+            else:
+                one = one + 1
+        if one == 0:
+            return True
+        return False
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         index = self.get_mine_index_xy(x, y)
-
+    
         if button == arcade.MOUSE_BUTTON_RIGHT:
             if self.squares[index].is_flag:
                 self.squares[index].is_flag = False
@@ -218,7 +229,12 @@ class MinesweeperGame(arcade.Window):
                             #else:
                             #    squarezz.draw_as(SquareImage.BLANK_DOWN)
             else:
-                self.draw_adjacent_bomb_count(self.squares[index])          
+                self.draw_adjacent_bomb_count(self.squares[index])    
+            if self.has_won():
+                print("you win")
+                arcade.close_window()
+                
+                 
 
 
                             
