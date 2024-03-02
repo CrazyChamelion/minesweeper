@@ -1,20 +1,32 @@
 import arcade
+import argparse
 from enum import Enum
 import math
 from random import sample
 
+# good numbers colums X rows 20 X 15 bombs 40
+# these get set by cli argument
 TOTAL_MINE = 40
-SCREEN_TITLE = "Mine Sweeper"
-# good numbers colums X rows 20 X 15 bombs 30
 GRID_COLUMNS = 20
 GRID_ROWS = 15
-SPRITE_SHEET_PATH = "./sprites.png"
+
 SPRITE_NATIVE_SIZE = 16
 SPRITE_SCALE = 4
 SPRITE_FINAL_SIZE = SPRITE_SCALE * SPRITE_NATIVE_SIZE
 SPRITE_HALF_SIZE = SPRITE_FINAL_SIZE / 2
+
 SCREEN_WIDTH = GRID_COLUMNS * SPRITE_FINAL_SIZE
 SCREEN_HEIGHT = GRID_ROWS * SPRITE_FINAL_SIZE
+
+SCREEN_TITLE = "Mine Sweeper"
+SPRITE_SHEET_PATH = "./sprites.png"
+
+
+def update_screen_dimensions():
+    global SCREEN_HEIGHT
+    global SCREEN_WIDTH
+    SCREEN_WIDTH = GRID_COLUMNS * SPRITE_FINAL_SIZE
+    SCREEN_HEIGHT = GRID_ROWS * SPRITE_FINAL_SIZE
 
 
 class SquareImage(Enum):
@@ -45,7 +57,7 @@ class Coordinate:
 SHEET_OFFSETS = {
     SquareImage.BLANK_UP: Coordinate(0, 51),
     SquareImage.BLANK_DOWN: Coordinate(17, 51),
-    SquareImage.FLAG: Coordinate(33, 51),
+    SquareImage.FLAG: Coordinate(34, 51),
     SquareImage.QUESTION_UP: Coordinate(50, 51),
     SquareImage.QUESTION_DOWN: Coordinate(67, 51),
     SquareImage.MINE_GREY: Coordinate(85, 51),
@@ -97,7 +109,7 @@ class Square:
         )
         self.sprite.center_x = self.x
         self.sprite.center_y = self.y
-        self.image = image 
+        self.image = image
 
     def draw(self):
         self.sprite.draw()
@@ -120,7 +132,7 @@ class MinesweeperGame(arcade.Window):
         for bomb in posible_bomb:
             bomb.is_bomb = True
             # for debugging uncomment
-            bomb.draw_as(SquareImage.MINE_GREY)
+            #bomb.draw_as(SquareImage.MINE_GREY)
 
         self.count_adjacnent_mine(posible_bomb)
 
@@ -163,7 +175,7 @@ class MinesweeperGame(arcade.Window):
                             adjacent_square.adjacent_bomb_count + 1
                         )
                         # for debugging uncomment
-                        #self.draw_adjacent_bomb_count(adjacent_square)
+                        # self.draw_adjacent_bomb_count(adjacent_square)
 
     def get_mine_index_ij(self, i, j):
         return i * GRID_ROWS + j
@@ -174,7 +186,7 @@ class MinesweeperGame(arcade.Window):
         index = self.get_mine_index_ij(i, j)
         # print("i {0}, j {1}, index {2}".format(i, j, index))
         return index
-    
+
     def has_won(self):
         one = 0
         for square in self.squares:
@@ -188,7 +200,7 @@ class MinesweeperGame(arcade.Window):
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         index = self.get_mine_index_xy(x, y)
-    
+
         if button == arcade.MOUSE_BUTTON_RIGHT:
             if self.squares[index].is_flag:
                 self.squares[index].is_flag = False
@@ -203,13 +215,13 @@ class MinesweeperGame(arcade.Window):
                 arcade.close_window()
             elif self.squares[index].adjacent_bomb_count == 0:
                 square = self.squares[index]
-                two2_prossess = [square] 
+                two2_prossess = [square]
                 while two2_prossess:
                     square = two2_prossess[0]
                     two2_prossess.remove(square)
                     for i_offset in range(-1, 2):
                         for j_offset in range(-1, 2):
-                            squarzx = square.i + i_offset 
+                            squarzx = square.i + i_offset
                             squarzy = square.j + j_offset
                             if squarzx < 0 or squarzx >= GRID_COLUMNS:
                                 continue
@@ -218,32 +230,22 @@ class MinesweeperGame(arcade.Window):
 
                             indexx = self.get_mine_index_ij(squarzx, squarzy)
                             squarezz = self.squares[indexx]
-                            if squarezz.adjacent_bomb_count > 0: 
-                                self.draw_adjacent_bomb_count(squarezz)    
+                            if squarezz.adjacent_bomb_count > 0:
+                                self.draw_adjacent_bomb_count(squarezz)
                                 continue
-                            if squarezz.image == SquareImage.BLANK_UP: 
+                            if squarezz.image == SquareImage.BLANK_UP:
                                 two2_prossess.append(squarezz)
                             squarezz.draw_as(SquareImage.BLANK_DOWN)
-                            #elif self.squares[index].is_bomb:
+                            # elif self.squares[index].is_bomb:
                             #        squarezz.draw_as(SquareImage.MINE_GREY)
-                            #else:
+                            # else:
                             #    squarezz.draw_as(SquareImage.BLANK_DOWN)
             else:
-                self.draw_adjacent_bomb_count(self.squares[index])    
+                self.draw_adjacent_bomb_count(self.squares[index])
             if self.has_won():
                 print("you win")
                 arcade.close_window()
-                
-                 
-
-
-                            
-                                
-
-                                        
-                        
-                #for square in squares:
-
+                # for square in squares:
 
     def on_draw(self):
         arcade.start_render()
@@ -252,12 +254,34 @@ class MinesweeperGame(arcade.Window):
 
 
 def main():
+    global GRID_ROWS
+    global GRID_COLUMNS
+    global TOTAL_MINE
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-r", "--rows", type=int, default=15, help="number of grid rows. default 15"
+    )
+    parser.add_argument(
+        "-c",
+        "--columns",
+        type=int,
+        default=20,
+        help="number of grid columns. default 20",
+    )
+    parser.add_argument(
+        "-b", "--bombs", type=int, default=40, help="number of bombs. default 40"
+    )
+    args = parser.parse_args()
+    print(args.rows)
+    GRID_ROWS = args.rows
+    GRID_COLUMNS = args.columns
+    TOTAL_MINE = args.bombs
+    update_screen_dimensions()
+
     _ = MinesweeperGame(SCREEN_WIDTH, SCREEN_HEIGHT)
     arcade.run()
 
 
 if __name__ == "__main__":
     main()
-
-
-#self.square.draw_as(SquareImage.BLANK_UP)
