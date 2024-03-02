@@ -43,22 +43,22 @@ class Coordinate:
 
 
 SHEET_OFFSETS = {
-    SquareImage.BLANK_UP: Coordinate(0, 50),
-    SquareImage.BLANK_DOWN: Coordinate(16, 50),
-    SquareImage.FLAG: Coordinate(33, 50),
-    SquareImage.QUESTION_UP: Coordinate(50, 50),
-    SquareImage.QUESTION_DOWN: Coordinate(67, 50),
-    SquareImage.MINE_GREY: Coordinate(84, 50),
-    SquareImage.MINE_RED: Coordinate(101, 50),
-    SquareImage.MINE_X: Coordinate(118, 50),
+    SquareImage.BLANK_UP: Coordinate(0, 51),
+    SquareImage.BLANK_DOWN: Coordinate(17, 51),
+    SquareImage.FLAG: Coordinate(33, 51),
+    SquareImage.QUESTION_UP: Coordinate(50, 51),
+    SquareImage.QUESTION_DOWN: Coordinate(67, 51),
+    SquareImage.MINE_GREY: Coordinate(85, 51),
+    SquareImage.MINE_RED: Coordinate(101, 51),
+    SquareImage.MINE_X: Coordinate(118, 51),
     SquareImage.ONE: Coordinate(0, 68),
-    SquareImage.TWO: Coordinate(16, 68),
-    SquareImage.THREE: Coordinate(33, 68),
-    SquareImage.FOUR: Coordinate(50, 68),
-    SquareImage.FIVE: Coordinate(67, 68),
-    SquareImage.SIX: Coordinate(84, 68),
-    SquareImage.SEVEN: Coordinate(101, 68),
-    SquareImage.EIGHT: Coordinate(118, 68),
+    SquareImage.TWO: Coordinate(17, 68),
+    SquareImage.THREE: Coordinate(34, 68),
+    SquareImage.FOUR: Coordinate(51, 68),
+    SquareImage.FIVE: Coordinate(68, 68),
+    SquareImage.SIX: Coordinate(85, 68),
+    SquareImage.SEVEN: Coordinate(102, 68),
+    SquareImage.EIGHT: Coordinate(119, 68),
 }
 
 
