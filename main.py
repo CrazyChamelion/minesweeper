@@ -78,16 +78,10 @@ class Square:
     def __init__(self, x, y, i, j):
         offset = SHEET_OFFSETS[SquareImage.BLANK_UP]
         self.image = SquareImage.BLANK_UP
-        # moving from arcade 2.7 to 3.0 this runs now but is wrong
-        self.sprite = arcade.Sprite(
-            SPRITE_SHEET_PATH,
-            SPRITE_SCALE,
-           #offset.x,
-           #offset.y,
-           # SPRITE_NATIVE_SIZE,
-           # SPRITE_NATIVE_SIZE,
-        )
+        self.all_sprites = arcade.load_spritesheet(SPRITE_SHEET_PATH)
         self.sprite_list = arcade.SpriteList()
+        
+        self.sprite = self.get_sprite(offset)
         self.sprite_list.append(self.sprite)
         self.x = x
         self.y = y
@@ -99,20 +93,22 @@ class Square:
         self.is_bomb = False
         self.is_flag = False
         self.adjacent_bomb_count = 0
+    
+    def get_sprite(self, offset):
+        sprite = arcade.Sprite()
+        sprite.texture = self.all_sprites.get_texture(arcade.LBWH(offset.x, offset.y, SPRITE_NATIVE_SIZE, SPRITE_NATIVE_SIZE))
+        sprite.scale = SPRITE_SCALE
+        return sprite
+
 
     def draw_as(self, image):
         offset = SHEET_OFFSETS[image]
-        self.sprite = arcade.Sprite(
-            SPRITE_SHEET_PATH,
-            SPRITE_SCALE,
-            offset.x,
-            offset.y,
-            SPRITE_NATIVE_SIZE,
-            SPRITE_NATIVE_SIZE,
-        )
+        self.sprite = self.get_sprite(offset)
         self.sprite.center_x = self.x
         self.sprite.center_y = self.y
         self.image = image
+        self.sprite_list.clear()
+        self.sprite_list.append(self.sprite)
 
     def draw(self):
         self.sprite_list.draw()
