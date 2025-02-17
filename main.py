@@ -78,14 +78,17 @@ class Square:
     def __init__(self, x, y, i, j):
         offset = SHEET_OFFSETS[SquareImage.BLANK_UP]
         self.image = SquareImage.BLANK_UP
+        # moving from arcade 2.7 to 3.0 this runs now but is wrong
         self.sprite = arcade.Sprite(
             SPRITE_SHEET_PATH,
             SPRITE_SCALE,
-            offset.x,
-            offset.y,
-            SPRITE_NATIVE_SIZE,
-            SPRITE_NATIVE_SIZE,
+           #offset.x,
+           #offset.y,
+           # SPRITE_NATIVE_SIZE,
+           # SPRITE_NATIVE_SIZE,
         )
+        self.sprite_list = arcade.SpriteList()
+        self.sprite_list.append(self.sprite)
         self.x = x
         self.y = y
         self.sprite.center_x = x
@@ -112,7 +115,7 @@ class Square:
         self.image = image
 
     def draw(self):
-        self.sprite.draw()
+        self.sprite_list.draw()
 
 
 class MinesweeperGame(arcade.Window):
@@ -248,7 +251,9 @@ class MinesweeperGame(arcade.Window):
                 # for square in squares:
 
     def on_draw(self):
-        arcade.start_render()
+        # working to upgrade to arcade 3.0
+        #arcade.start_render()
+        self.clear()
         for s in self.squares:
             s.draw()
 
